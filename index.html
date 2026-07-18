@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hey Design Eye - Premium Canva Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: #0a0a0f;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+            color: white;
+        }
+
+        /* Custom cursor */
+        #cursor {
+            position: fixed; width: 12px; height: 12px;
+            background: #fff; border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+            mix-blend-mode: difference;
+        }
+        #cursor-follower {
+            position: fixed; width: 40px; height: 40px;
+            border: 1px solid rgba(255,255,255,0.4); border-radius: 50%;
+            pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.12s ease, width 0.3s, height 0.3s, border-color 0.3s;
+        }
+        body.hovering #cursor { width: 20px; height: 20px; }
+        body.hovering #cursor-follower { width: 60px; height: 60px; border-color: rgba(255,255,255,0.7); }
+
+        /* Magnetic particles */
+        .particle {
+            position: fixed; width: 4px; height: 4px;
+            border-radius: 50%; pointer-events: none;
+            z-index: 9997; opacity: 0;
+        }
+
+        /* Global Elements */
+        .glass-nav {
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* Floating orbs */
+        .hero-bg {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, #1a0a2e 0%, #0a0a0f 70%);
+            z-index: 0;
+        }
+        .noise-overlay {
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.3; z-index: 0; pointer-events: none;
+        }
+        .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(70px); opacity: 0.2; pointer-events: none;
+            animation: float 8s ease-in-out infinite; z-index: 0;
+        }
+        .orb-1 { width: 400px; height: 400px; background: #7d2ae8; top: -100px; left: -100px; animation-delay: 0s; }
+        .orb-2 { width: 300px; height: 300px; background: #00c4cc; bottom: -50px; right: -50px; animation-delay: -3s; }
+        .orb-3 { width: 250px; height: 250px; background: #ff0099; top: 40%; left: 30%; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* 3D Cards */
+        .card-3d {
+            position: relative; transform-style: preserve-3d;
+            transition: transform 0.1s ease; cursor: none;
+        }
+        .card-inner {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 2rem;
+            position: relative; overflow: hidden;
+            transition: border-color 0.3s, background 0.3s;
+            height: 100%; display: flex; flex-direction: column;
+        }
+        .card-3d:hover .card-inner {
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.06);
+        }
+        .card-shine {
+            position: absolute; inset: 0; border-radius: 20px;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.08), transparent 40%);
+        }
+        .card-3d:hover .card-shine { opacity: 1; }
+
+        /* Magnetic buttons */
+        .mag-btn {
+            position: relative; padding: 14px 32px;
+            border-radius: 100px; font-size: 14px; font-weight: 600;
+            cursor: none; border: none;
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            letter-spacing: 0.01em; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .mag-btn-purple { background: linear-gradient(135deg, #7d2ae8, #a855f7); color: #fff; }
+        .mag-btn-purple:hover { box-shadow: 0 8px 40px rgba(125,42,232,0.5); }
+        .mag-btn-cyan { background: linear-gradient(135deg, #00c4cc, #2dd4bf); color: #1a0a2e; }
+        .mag-btn-cyan:hover { box-shadow: 0 8px 40px rgba(0,196,204,0.5); }
+        .mag-btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+        .mag-btn-outline:hover { border-color: rgba(255,255,255,0.6); box-shadow: 0 0 30px rgba(255,255,255,0.08); }
+        
+        .divider {
+            height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            margin: 0 auto; max-width: 1200px;
+        }
+
+        /* Glowing Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #00c4cc, #7d2ae8, #ff0099);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Cursors -->
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            
+            <!-- Logo & MSME Badge Together -->
+            <div class="flex items-center gap-4">
+                <a href="#" class="block" data-magnetic>
+                    <img src="hey design eye logos.PNG" alt="Hey Design Eye" class="h-10 object-contain">
+                </a>
+                
+                <!-- MSME Badge Moved to Header -->
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-[#00c4cc]/50 transition-colors cursor-none" data-lit>
+                    <span class="text-lg">🇮🇳</span>
+                    <div class="flex flex-col">
+                        <span class="text-[8px] text-gray-400 font-bold uppercase tracking-widest leading-none">MSME Registered</span>
+                        <span class="text-[10px] text-[#00c4cc] font-mono leading-tight">UDYAM-BR-26-0172414</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-[#00c4cc] transition-colors cursor-none" data-lit>Features</a>
+                <a href="#pricing" class="hover:text-[#ff0099] transition-colors cursor-none" data-lit>Pricing</a>
+                <a href="#how-it-works" class="hover:text-[#7d2ae8] transition-colors cursor-none" data-lit>How it Works</a>
+            </div>
+            <a href="#pricing" class="mag-btn mag-btn-outline" data-magnetic>
+                View Plans
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-24 pb-12 overflow-hidden px-6">
+        <div class="hero-bg"></div>
+        <div class="noise-overlay"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        
+        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Text Column -->
+            <div class="text-left">
+                <p class="text-[11px] tracking-[0.2em] text-gray-400 uppercase mb-4 font-semibold">Premium Accounts · Instant Delivery</p>
+                <h1 class="text-5xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
+                    Unlock Your<br>Creative Potential<br>
+                    <span class="text-gradient">with Canva Pro.</span>
+                </h1>
+                <p class="text-lg text-gray-400 mb-8 max-w-lg leading-relaxed">
+                    Access millions of premium graphics, templates, and advanced design tools at unbeatable prices. Design like a professional today!
+                </p>
+                
+                <div class="flex flex-wrap items-center gap-6">
+                    <a href="#pricing" class="mag-btn mag-btn-purple text-lg px-8 py-4" data-magnetic>
+                        Get Canva Pro Now &nbsp;→
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Image Column -->
+            <div class="relative w-full h-full flex justify-center lg:justify-end">
+                <div class="orb orb-3"></div>
+                <div class="card-3d w-full max-w-lg" data-magnetic>
+                    <div class="card-inner !p-2 !bg-white/5 !border-white/10 shadow-2xl">
+                        <div class="card-shine"></div>
+                        <img src="canva pro.jpg" alt="Canva Pro Workspace" class="w-full h-auto rounded-xl object-cover relative z-10 opacity-90">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-[11px] tracking-[0.2em] text-[#00c4cc] uppercase mb-3 font-bold">Why Upgrade</p>
+                <h2 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Premium features for<br>creators that stand out.</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner">
+                        <div class="card-shine"></div>
+                        <div class="w-12 h-12 rounded-xl bg-[#7d2ae8]/20 flex items-center justify-center text-2xl mb-6 shadow-[0_0_15px_rgba(125,42,232,0.3)]">♾️</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Unlimited Content</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed mb-6">Access 100+ million premium photos, videos, audio tracks, and exclusive graphics. Never run out of creative assets for your projects.</p>
+                        <div class="mt-auto inline-block text-[11px] font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-[#7d2ae8]/10 text-[#a855f7] self-start border border-[#7d2ae8]/20">Assets ↗</div>
+                    </div>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner">
+                        <div class="card-shine"></div>
+                        <div class="w-12 h-12 rounded-xl bg-[#ff0099]/20 flex items-center justify-center text-2xl mb-6 shadow-[0_0_15px_rgba(255,0,153,0.3)]">✂️</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Background Remover</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed mb-6">Remove image backgrounds instantly with just one click. Perfect for creating flawless product photos, thumbnails, and portraits.</p>
+                        <div class="mt-auto inline-block text-[11px] font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-[#ff0099]/10 text-[#f472b6] self-start border border-[#ff0099]/20">Magic Tool ↗</div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner">
+                        <div class="card-shine"></div>
+                        <div class="w-12 h-12 rounded-xl bg-[#00c4cc]/20 flex items-center justify-center text-2xl mb-6 shadow-[0_0_15px_rgba(0,196,204,0.3)]">🎨</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Brand Kit</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed mb-6">Stay consistently on-brand by uploading your custom logos, colors, and fonts across all your team's designs automatically.</p>
+                        <div class="mt-auto inline-block text-[11px] font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-[#00c4cc]/10 text-[#2dd4bf] self-start border border-[#00c4cc]/20">Identity ↗</div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner border-[#ff0099]/30 bg-white/5">
+                        <div class="card-shine"></div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7d2ae8] to-[#ff0099] flex items-center justify-center text-2xl mb-6 shadow-[0_0_20px_rgba(255,0,153,0.5)]">✨</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Magic Resize & AI</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed mb-6">Instantly resize your designs for any social media platform format, and <span class="text-[#ff0099] font-bold">get AI features for your design</span> to automate and enhance your creative workflow.</p>
+                        <div class="mt-auto inline-block text-[11px] font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-[#ff0099]/20 text-white self-start border border-[#ff0099]/40 shadow-[0_0_10px_rgba(255,0,153,0.3)]">AI Powered ↗</div>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner">
+                        <div class="card-shine"></div>
+                        <div class="w-12 h-12 rounded-xl bg-[#f59e0b]/20 flex items-center justify-center text-2xl mb-6 shadow-[0_0_15px_rgba(245,158,11,0.3)]">📑</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Premium Templates</h3>
+                        <p class="text-sm text-gray-400 leading-relaxed mb-6">Get exclusive access to hundreds of thousands of high-quality, professional templates for posters, videos, and presentations.</p>
+                        <div class="mt-auto inline-block text-[11px] font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-[#f59e0b]/10 text-[#fbbf24] self-start border border-[#f59e0b]/20">Templates ↗</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-[11px] tracking-[0.2em] text-[#7d2ae8] uppercase mb-3 font-bold">Invest In Your Creativity</p>
+                <h2 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">Choose Your Plan</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Flexible subscriptions tailored to your creative needs. Save more with longer plans!</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 1 Month -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner justify-between">
+                        <div class="card-shine"></div>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-300 mb-2">1 Month</h3>
+                            <div class="flex items-baseline mb-6"><span class="text-4xl font-bold text-white">₹90</span><span class="text-gray-500 ml-1">/-</span></div>
+                        </div>
+                        <a href="YOUR_PAYMENT_LINK_HERE" class="mag-btn mag-btn-outline w-full mt-6 text-sm" style="padding: 12px 20px;" data-magnetic>Experience Now</a>
+                    </div>
+                </div>
+
+                <!-- 3 Months -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner justify-between">
+                        <div class="card-shine"></div>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-300 mb-2">3 Months</h3>
+                            <div class="flex items-baseline mb-6"><span class="text-4xl font-bold text-white">₹199</span><span class="text-gray-500 ml-1">/-</span></div>
+                        </div>
+                        <a href="YOUR_PAYMENT_LINK_HERE" class="mag-btn mag-btn-outline w-full mt-6 text-sm" style="padding: 12px 20px;" data-magnetic>Experience Now</a>
+                    </div>
+                </div>
+
+                <!-- 6 Months -->
+                <div class="card-3d" data-magnetic>
+                    <div class="card-inner justify-between">
+                        <div class="card-shine"></div>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-300 mb-2">6 Months</h3>
+                            <div class="flex items-baseline mb-6"><span class="text-4xl font-bold text-white">₹349</span><span class="text-gray-500 ml-1">/-</span></div>
+                        </div>
+                        <a href="YOUR_PAYMENT_LINK_HERE" class="mag-btn mag-btn-outline w-full mt-6 text-sm" style="padding: 12px 20px;" data-magnetic>Experience Now</a>
+                    </div>
+                </div>
+
+                <!-- 1 Year -->
+                <div class="card-3d relative z-20" data-magnetic>
+                    <div class="card-inner justify-between !border-[#00c4cc]/50 !bg-[#00c4cc]/5 shadow-[0_0_30px_rgba(0,196,204,0.15)]">
+                        <div class="card-shine"></div>
+                        <div class="absolute top-4 right-4 bg-[#00c4cc] text-[#0a0a0f] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">Best Value!</div>
+                        <div>
+                            <h3 class="text-lg font-medium text-[#00c4cc] mb-2">1 Year</h3>
+                            <div class="flex items-baseline mb-6"><span class="text-4xl font-bold text-white">₹499</span><span class="text-gray-400 ml-1">/-</span></div>
+                        </div>
+                        <a href="YOUR_PAYMENT_LINK_HERE" class="mag-btn mag-btn-cyan w-full mt-6 text-sm font-bold" style="padding: 12px 20px;" data-magnetic>Experience Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- How To Join -->
+    <section id="how-it-works" class="py-24 px-6 relative z-10">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <p class="text-[11px] tracking-[0.2em] text-[#ff0099] uppercase mb-3 font-bold">Fast & Secure</p>
+                <h2 class="text-3xl font-bold text-white mb-8">How to Join Canva Pro</h2>
+                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-[15px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[#ff0099] before:via-[#7d2ae8] before:to-transparent">
+                    <!-- Step 1 -->
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-full border-2 border-[#ff0099] bg-[#0a0a0f] text-[#ff0099] font-bold z-10 shrink-0">1</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] pl-4 md:pl-0 md:odd:pr-6 md:even:pl-6">
+                            <h4 class="text-white font-semibold mb-1">Select & Pay</h4>
+                            <p class="text-gray-400 text-sm">Choose your plan and checkout securely.</p>
+                        </div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-full border-2 border-[#7d2ae8] bg-[#0a0a0f] text-[#7d2ae8] font-bold z-10 shrink-0">2</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] pl-4 md:pl-0 md:odd:pr-6 md:even:pl-6">
+                            <h4 class="text-white font-semibold mb-1">Check Email</h4>
+                            <p class="text-gray-400 text-sm">Receive confirmation & exclusive invitation link.</p>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-full border-2 border-[#00c4cc] bg-[#0a0a0f] text-[#00c4cc] font-bold z-10 shrink-0">3</div>
+                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] pl-4 md:pl-0 md:odd:pr-6 md:even:pl-6">
+                            <h4 class="text-white font-semibold mb-1">Activate & Enjoy</h4>
+                            <p class="text-gray-400 text-sm">Sign in with the same email and access Pro tools instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-3d" data-magnetic>
+                <div class="card-inner !bg-gradient-to-br from-[#1a0a2e] to-[#0a0a0f] !border-[#7d2ae8]/30">
+                    <div class="card-shine"></div>
+                    <h2 class="text-2xl font-bold text-white mb-6">FAQ</h2>
+                    <div class="space-y-4">
+                        <div class="border-b border-white/10 pb-4">
+                            <h4 class="text-white font-semibold text-sm mb-1">Is this a shared account or private?</h4>
+                            <p class="text-gray-400 text-xs">Your designs remain 100% private to your own email account. No one else can see your work.</p>
+                        </div>
+                        <div class="border-b border-white/10 pb-4">
+                            <h4 class="text-white font-semibold text-sm mb-1">Can I use my existing Canva account?</h4>
+                            <p class="text-gray-400 text-xs">Yes! The Pro access will be linked directly to your current email address.</p>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold text-sm mb-1">Can I renew after my plan expires?</h4>
+                            <p class="text-gray-400 text-xs">Absolutely. You can easily purchase another plan and continue using the same account seamlessly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 mt-12 bg-[#0a0a0f] relative z-20">
+        <div class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-2 gap-8">
+            <div>
+                <img src="hey design eye logos.PNG" alt="Hey Design Eye" class="h-10 mb-6 object-contain">
+                <p class="text-gray-400 text-sm mb-2">Email: <a href="mailto:heydesigneye.support@gmail.com" class="text-[#00c4cc] hover:underline">heydesigneye.support@gmail.com</a></p>
+                <p class="text-gray-400 text-sm mb-4">Phone/WhatsApp: <span class="text-white">+91 7493828553</span></p>
+                <div class="inline-block mt-2 border border-white/10 bg-white/5 rounded-md px-3 py-2 text-xs text-gray-400">
+                    <span class="text-[#00c4cc] font-semibold">MSME Registered</span><br>
+                    UDYAM-BR-26-0172414 | HEY DESIGN EYE
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:items-end justify-center">
+                <h4 class="text-white font-semibold mb-4">Legal Policies</h4>
+                <button onclick="toggleModal('legal-modal')" class="text-gray-400 hover:text-[#ff0099] text-sm mb-2 transition-colors cursor-none" data-lit>Privacy Policy</button>
+                <button onclick="toggleModal('legal-modal')" class="text-gray-400 hover:text-[#ff0099] text-sm mb-2 transition-colors cursor-none" data-lit>Refund Policy</button>
+                <button onclick="toggleModal('legal-modal')" class="text-gray-400 hover:text-[#ff0099] text-sm mb-2 transition-colors cursor-none" data-lit>Terms & Conditions</button>
+            </div>
+        </div>
+        
+        <div class="border-t border-white/5 px-6 py-6 text-center">
+            <p class="text-xs text-gray-500 mb-2">&copy; 2026 Hey Design Eye - Canva_Pro. All rights reserved.</p>
+            <p class="text-[10px] text-gray-600">Disclaimer: Hey Design Eye is an independent reseller. 'Canva' is a trademark of Canva Pvt. Ltd.</p>
+        </div>
+    </footer>
+
+    <!-- Legal Modal -->
+    <div id="legal-modal" class="fixed inset-0 bg-[#0a0a0f]/90 backdrop-blur-sm z-[100] hidden flex justify-center items-center p-4">
+        <div class="bg-[#1a0a2e] border border-white/10 rounded-2xl w-full max-w-4xl h-[80vh] flex flex-col shadow-2xl relative overflow-hidden">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/20">
+                <h3 class="text-xl font-bold text-white">Hey Design Eye - Legal Policies</h3>
+                <button onclick="toggleModal('legal-modal')" class="text-gray-400 hover:text-white text-2xl leading-none cursor-none">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto text-sm text-gray-300 space-y-4 font-light">
+                <p><strong>Version:</strong> 1.0 | <strong>Last Updated:</strong> July 2026 | <strong>Jurisdiction:</strong> Patna, Bihar, India</p>
+                <h4 class="text-[#00c4cc] font-semibold mt-4">1. Independent Status</h4>
+                <p>Hey Design Eye is an independent reseller/service provider and is not owned, operated, endorsed, or sponsored by Canva Pvt. Ltd.</p>
+                <h4 class="text-[#00c4cc] font-semibold mt-4">2. Orders & Access</h4>
+                <p>Customers must use the same email address submitted during checkout. Access is granted only for the purchased subscription period. Customers are responsible for backing up all designs.</p>
+                <h4 class="text-[#00c4cc] font-semibold mt-4">3. Payments & Refunds</h4>
+                <p>Refund requests must be made within 48 hours before activation. Activated subscriptions are generally non-refundable unless required by law.</p>
+            </div>
+            <div class="p-4 border-t border-white/10 bg-black/20 text-right">
+                <button onclick="toggleModal('legal-modal')" class="mag-btn mag-btn-outline px-6 py-2" data-magnetic>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactivity Scripts -->
+    <script>
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursor-follower');
+        let mx = 0, my = 0, fx = 0, fy = 0;
+
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            cursor.style.left = mx + 'px';
+            cursor.style.top = my + 'px';
+        });
+
+        function animateFollower() {
+            fx += (mx - fx) * 0.12;
+            fy += (my - fy) * 0.12;
+            follower.style.left = fx + 'px';
+            follower.style.top = fy + 'px';
+            requestAnimationFrame(animateFollower);
+        }
+        animateFollower();
+
+        // Hover states
+        document.querySelectorAll('a, button, .card-3d, .mag-btn, [data-lit]').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // 3D Card Tilt Effect
+        document.querySelectorAll('.card-3d').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const cx = rect.width / 2;
+                const cy = rect.height / 2;
+                const rotX = ((y - cy) / cy) * -10;
+                const rotY = ((x - cx) / cx) * 10;
+                card.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(10px)`;
+                
+                const shine = card.querySelector('.card-shine');
+                if (shine) {
+                    shine.style.setProperty('--mouse-x', x + 'px');
+                    shine.style.setProperty('--mouse-y', y + 'px');
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+            });
+        });
+
+        // Magnetic Effect
+        document.querySelectorAll('[data-magnetic]').forEach(btn => {
+            btn.addEventListener('mousemove', e => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0,0)';
+            });
+        });
+
+        // Light up text effect
+        document.querySelectorAll('[data-lit]').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.style.color = '#fff';
+                el.style.textShadow = '0 0 10px rgba(255,255,255,0.8)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.color = '';
+                el.style.textShadow = 'none';
+            });
+        });
+
+        // Particle Trail Effect
+        const colors = ['#7d2ae8','#00c4cc','#ff0099'];
+        function spawnParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            document.body.appendChild(p);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1.5 + Math.random() * 2;
+            const life = 400 + Math.random() * 300;
+            let dx = Math.cos(angle) * speed;
+            let dy = Math.sin(angle) * speed;
+            let opacity = 0.6;
+            let t = 0;
+            
+            const step = () => {
+                t += 16;
+                opacity = 0.6 * (1 - t / life);
+                p.style.left = (parseFloat(p.style.left) + dx) + 'px';
+                p.style.top = (parseFloat(p.style.top) + dy) + 'px';
+                p.style.opacity = Math.max(0, opacity);
+                dy += 0.05; // gravity
+                if (t < life) requestAnimationFrame(step);
+                else p.remove();
+            };
+            requestAnimationFrame(step);
+        }
+
+        let lastParticle = 0;
+        document.addEventListener('mousemove', e => {
+            const now = Date.now();
+            if (now - lastParticle > 50) {
+                spawnParticle(e.clientX, e.clientY);
+                lastParticle = now;
+            }
+        });
+
+        // Legal Modal logic
+        function toggleModal(modalID) {
+            const modal = document.getElementById(modalID);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; 
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto'; 
+            }
+        }
+    </script>
+</body>
+</html>
