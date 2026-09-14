@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hey Design Eye — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08080d;color:#fff;font-family:Inter,sans-serif} .wrap{max-width:1280px;margin:auto;padding:30px 20px}
+.glass{background:#111119;border:1px solid rgba(255,255,255,.08);border-radius:20px}.display{font-family:"Space Grotesk",sans-serif}
+input,select{width:100%;background:#0b0b11;color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;outline:none}
+button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff}.ghost{background:#181821;color:#ddd;border:1px solid #292936}
+.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,1fr)}.plans{grid-template-columns:repeat(4,1fr)}
+.stat{padding:22px}.stat .n{font:700 34px "Space Grotesk";margin-top:7px}.muted{color:#777786;font-size:13px}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{text-align:left;padding:14px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}.table th{color:#777786;font-weight:600}
+.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700}.active{background:#063b2a;color:#5ee7b7}.soon{background:#3d2c05;color:#facc15}.expired{background:#3d1118;color:#fb7185}.registered{background:#191c35;color:#a5b4fc}.renewal{background:#32113a;color:#f0abfc}
+.login{max-width:420px;margin:12vh auto;padding:28px}.login h1{margin:0 0 8px}.space{height:14px}
+@media(max-width:900px){.stats,.plans{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.stats,.plans{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="loginView" class="wrap">
+  <div class="glass login">
+    <div class="muted">PRIVATE AREA</div><h1 class="display">Admin Dashboard</h1><p class="muted">Hey Design Eye subscription management.</p>
+    <div class="space"></div><input id="email" type="email" placeholder="Admin email"><div class="space"></div><input id="password" type="password" placeholder="Password">
+    <div class="space"></div><button class="primary" style="width:100%" onclick="login()">Sign In</button><p id="loginMsg" class="muted"></p>
+  </div>
+</div>
+
+<div id="appView" class="wrap" style="display:none">
+  <header style="display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px">
+    <div><div class="muted">HEY DESIGN EYE</div><h1 class="display" style="font-size:32px;margin:4px 0">Subscription Control</h1><div id="adminEmail" class="muted"></div></div>
+    <div style="display:flex;gap:8px"><button class="ghost" onclick="loadData()">Refresh</button><button class="ghost" onclick="logout()">Logout</button></div>
+  </header>
+
+  <div class="grid stats">
+    <div class="glass stat"><div class="muted">TOTAL USERS</div><div id="total" class="n">0</div></div>
+    <div class="glass stat"><div class="muted">ACTIVE</div><div id="active" class="n">0</div></div>
+    <div class="glass stat"><div class="muted">EXPIRING SOON</div><div id="soon" class="n">0</div></div>
+    <div class="glass stat"><div class="muted">EXPIRED</div><div id="expired" class="n">0</div></div>
+  </div>
+
+  <div class="grid plans" style="margin-top:14px">
+    <div class="glass stat"><div class="muted">1 MONTH</div><div id="p1" class="n">0</div></div>
+    <div class="glass stat"><div class="muted">3 MONTHS</div><div id="p3" class="n">0</div></div>
+    <div class="glass stat"><div class="muted">6 MONTHS</div><div class="n">0</div></div>
+    <div class="glass stat"><div class="muted">1 YEAR</div><div id="p12" class="n">0</div></div>
+  </div>
+
+  <div class="glass" style="padding:18px;margin-top:18px">
+    <div style="display:grid;grid-template-columns:1fr 220px;gap:10px"><input id="search" placeholder="Search name, email or phone..." oninput="renderTable()"><select id="filter" onchange="renderTable()"><option value="">All Plans</option><option>1 Month</option><option>3 Months</option><option>6 Months</option><option>1 Year</option></select></div>
+    <div class="table-wrap" style="margin-top:12px"><table class="table"><thead><tr><th>Customer</th><th>Contact</th><th>Plan</th><th>Start</th><th>Expiry</th><th>Status</th><th>Created</th></tr></thead><tbody id="tbody"></tbody></table></div>
+  </div>
+  <p id="appMsg" class="muted"></p>
+</div>
+
+<script>
+const CONFIG={SUPABASE_URL:"YOUR_SUPABASE_URL",SUPABASE_ANON_KEY:"YOUR_SUPABASE_ANON_KEY",ADMIN_EMAIL:"heydesigneye.info@gmail.com"};
+const sb=CONFIG.SUPABASE_URL.startsWith("http")&&!CONFIG.SUPABASE_ANON_KEY.startsWith("YOUR_")?supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY):null;
+let rows=[];
+
+function statusOf(expiry){
+ const d=new Date(expiry+"T23:59:59"), now=new Date(), days=Math.ceil((d-now)/86400000);
+ if(days<0)return ["Expired","expired"]; if(days<=7)return ["Expiring Soon","soon"]; return ["Active","active"];
+}
+async function login(){
+ const msg=document.getElementById("loginMsg");
+ if(!sb){msg.textContent="Add Supabase URL and anon key first.";return}
+ const {error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});
+ if(error){msg.textContent=error.message;return}
+ await showApp();
+}
+async function showApp(){
+ const {data:{user}}=await sb.auth.getUser();
+ if(!user){return}
+ if(user.email.toLowerCase()!==CONFIG.ADMIN_EMAIL.toLowerCase()){await sb.auth.signOut();document.getElementById("loginMsg").textContent="This account is not authorized as admin.";return}
+ document.getElementById("loginView").style.display="none";document.getElementById("appView").style.display="block";document.getElementById("adminEmail").textContent=user.email;loadData();
+}
+async function loadData(){
+ document.getElementById("appMsg").textContent="Loading...";
+ const {data,error}=await sb.from("subscriptions").select("*").order("created_at",{ascending:false});
+ if(error){document.getElementById("appMsg").textContent=error.message;return}
+ rows=data||[];updateStats();renderTable();document.getElementById("appMsg").textContent="";
+}
+function updateStats(){
+ let a=0,s=0,e=0;const pc={"1 Month":0,"3 Months":0,"6 Months":0,"1 Year":0};
+ rows.forEach(r=>{pc[r.plan]=(pc[r.plan]||0)+1;const [st]=statusOf(r.expiry_date);if(st==="Active")a++;else if(st==="Expiring Soon")s++;else e++;});
+ total.textContent=rows.length;active.textContent=a;soon.textContent=s;expired.textContent=e;p1.textContent=pc["1 Month"];p3.textContent=pc["3 Months"];p6.textContent=pc["6 Months"];p12.textContent=pc["1 Year"];
+}
+function renderTable(){
+ const q=search.value.trim().toLowerCase(), f=filter.value;
+ const filtered=rows.filter(r=>(!q||`${r.name} ${r.email} ${r.phone}`.toLowerCase().includes(q))&&(!f||r.plan===f));
+ tbody.innerHTML=filtered.map(r=>{const [st,cl]=statusOf(r.expiry_date);return `<tr><td><strong>${esc(r.name)}</strong></td><td>${esc(r.email)}<br><span class="muted">${esc(r.phone)}</span></td><td>${esc(r.plan)}</td><td>${esc(r.start_date)}</td><td>${esc(r.expiry_date)}</td><td><span class="badge ${cl}">${st}</span></td><td>${new Date(r.created_at).toLocaleString()}</td></tr>`}).join("")||`<tr><td colspan="7" class="muted">No customers found.</td></tr>`;
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+async function logout(){await sb.auth.signOut();location.reload();}
+sb?.auth.onAuthStateChange((_event,session)=>{if(session)showApp()});
+</script>
+</body>
+</html>

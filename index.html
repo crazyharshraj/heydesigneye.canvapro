@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hey Design Eye — Canva Pro Subscriptions</title>
+  <meta name="description" content="Premium Canva Pro subscription plans by Hey Design Eye." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#07070b;--panel:#101017;--muted:#9b9ba8;--purple:#8b5cf6;--pink:#ec4899;--cyan:#22d3ee}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:#fff;font-family:Inter,sans-serif;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
+    .font-display{font-family:"Space Grotesk",sans-serif}.glass{background:rgba(14,14,21,.68);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
+    .gradient-text{background:linear-gradient(100deg,#fff 0%,#c4b5fd 45%,#f9a8d4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .glow{box-shadow:0 0 80px rgba(139,92,246,.16)}.hero-glow{position:absolute;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.2),transparent 68%);filter:blur(8px);pointer-events:none}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:14px;padding:13px 20px;font-weight:700;transition:.25s;cursor:pointer}
+    .btn-primary{background:linear-gradient(135deg,#7c3aed,#ec4899);box-shadow:0 12px 35px rgba(124,58,237,.24)}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 45px rgba(236,72,153,.28)}
+    .btn-ghost{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035)}.btn-ghost:hover{background:rgba(255,255,255,.07)}
+    .plan{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018));transition:.3s}
+    .plan:hover{transform:translateY(-7px);border-color:rgba(167,139,250,.45);box-shadow:0 25px 70px rgba(0,0,0,.35)}
+    .plan.featured{border-color:rgba(34,211,238,.38);background:linear-gradient(180deg,rgba(34,211,238,.09),rgba(255,255,255,.018))}
+    .plan:after{content:"";position:absolute;inset:-1px;background:radial-gradient(300px circle at var(--x,50%) var(--y,0%),rgba(255,255,255,.1),transparent 45%);pointer-events:none}
+    .modal-backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(12px)}.modal{max-height:92vh;overflow:auto}
+    input,select{width:100%;border:1px solid rgba(255,255,255,.1);background:#0b0b11;color:#fff;border-radius:12px;padding:13px 14px;outline:none}
+    input:focus,select:focus{border-color:rgba(139,92,246,.8);box-shadow:0 0 0 3px rgba(139,92,246,.12)}
+    .status{min-height:22px}.toast{position:fixed;right:20px;bottom:20px;z-index:1000;max-width:380px}
+  </style>
+</head>
+<body>
+  <header class="fixed top-0 inset-x-0 z-50 glass">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 h-20 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3">
+        <img src="hey design eye logos.PNG" alt="Hey Design Eye" class="h-10 w-auto object-contain" onerror="this.style.display='none'">
+        <div><div class="font-display font-bold tracking-tight">HEY DESIGN EYE</div><div class="text-[10px] tracking-[.24em] text-gray-500">CREATIVE ACCESS</div></div>
+      </a>
+      <nav class="hidden md:flex items-center gap-7 text-sm text-gray-400">
+        <a href="#features" class="hover:text-white">Features</a><a href="#pricing" class="hover:text-white">Pricing</a><a href="#faq" class="hover:text-white">FAQ</a>
+      </nav>
+      <button class="btn btn-ghost text-sm" onclick="openRenewal()">Renew Subscription</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative pt-36 pb-24 px-5 overflow-hidden">
+      <div class="hero-glow -top-32 -left-24"></div><div class="hero-glow top-20 right-[-300px]" style="background:radial-gradient(circle,rgba(236,72,153,.13),transparent 68%)"></div>
+      <div class="max-w-7xl mx-auto grid lg:grid-cols-[1.05fr_.95fr] gap-14 items-center relative z-10">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full glass text-xs text-gray-300 mb-7"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Premium access • Simple subscription</div>
+          <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[.98] tracking-[-.04em]">Create more.<br><span class="gradient-text">Limit less.</span></h1>
+          <p class="text-gray-400 text-lg leading-8 max-w-xl mt-7">Get Canva Pro access through a clean, straightforward subscription experience built by Hey Design Eye.</p>
+          <div class="flex flex-wrap gap-3 mt-9"><a href="#pricing" class="btn btn-primary">View Plans <span class="ml-2">→</span></a><button onclick="openRenewal()" class="btn btn-ghost">Renew Existing Plan</button></div>
+          <div class="grid grid-cols-3 max-w-xl gap-3 mt-10">
+            <div class="glass rounded-2xl p-4"><div class="font-semibold">4 Plans</div><div class="text-xs text-gray-500 mt-1">Flexible duration</div></div>
+            <div class="glass rounded-2xl p-4"><div class="font-semibold">Auto Dates</div><div class="text-xs text-gray-500 mt-1">Start & expiry</div></div>
+            <div class="glass rounded-2xl p-4"><div class="font-semibold">Email Updates</div><div class="text-xs text-gray-500 mt-1">Confirmation</div></div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute inset-8 rounded-[40px] bg-gradient-to-br from-violet-500/20 via-transparent to-pink-500/15 blur-3xl"></div>
+          <div class="glass glow rounded-[30px] p-3 relative">
+            <img src="canva pro.jpg" alt="Canva Pro Workspace" class="w-full rounded-[22px] object-cover aspect-[4/3]" onerror="this.style.display='none'">
+            <div class="absolute left-7 right-7 bottom-7 glass rounded-2xl p-5">
+              <div class="text-xs uppercase tracking-[.18em] text-gray-500">Built for creators</div>
+              <div class="font-display text-2xl font-bold mt-1">Premium tools. One simple plan.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="py-24 px-5 border-t border-white/5">
+      <div class="max-w-7xl mx-auto">
+        <div class="max-w-2xl"><div class="text-xs uppercase tracking-[.22em] text-violet-300 font-bold">Why upgrade</div><h2 class="font-display text-4xl sm:text-5xl font-bold mt-3">Everything you need to design faster.</h2></div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
+          <div class="glass rounded-3xl p-7"><div class="text-2xl">∞</div><h3 class="font-semibold text-lg mt-5">Premium Assets</h3><p class="text-sm text-gray-500 mt-2 leading-6">Explore premium creative assets and templates.</p></div>
+          <div class="glass rounded-3xl p-7"><div class="text-2xl">✦</div><h3 class="font-semibold text-lg mt-5">AI & Magic Tools</h3><p class="text-sm text-gray-500 mt-2 leading-6">Speed up everyday design work with advanced tools.</p></div>
+          <div class="glass rounded-3xl p-7"><div class="text-2xl">▣</div><h3 class="font-semibold text-lg mt-5">Premium Templates</h3><p class="text-sm text-gray-500 mt-2 leading-6">Start from polished templates for different formats.</p></div>
+          <div class="glass rounded-3xl p-7"><div class="text-2xl">↗</div><h3 class="font-semibold text-lg mt-5">Easy Renewal</h3><p class="text-sm text-gray-500 mt-2 leading-6">Renew using your registered email and phone.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="py-24 px-5">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto"><div class="text-xs uppercase tracking-[.22em] text-pink-300 font-bold">Choose your access</div><h2 class="font-display text-4xl sm:text-5xl font-bold mt-3">Simple pricing. No confusion.</h2><p class="text-gray-500 mt-4">Choose a duration and continue with your details. Payment gateway can be added to this flow later.</p></div>
+        <div id="plans" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-12"></div>
+        <div class="text-center mt-8"><button onclick="openRenewal()" class="text-sm text-gray-400 hover:text-white underline underline-offset-4">Already subscribed? Renew your subscription →</button></div>
+      </div>
+    </section>
+
+    <section id="how" class="py-24 px-5 border-y border-white/5">
+      <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-5">
+        <div class="glass rounded-3xl p-7"><span class="text-violet-300 text-sm font-bold">01</span><h3 class="font-display text-xl font-bold mt-4">Choose</h3><p class="text-gray-500 text-sm leading-6 mt-2">Select your preferred subscription duration.</p></div>
+        <div class="glass rounded-3xl p-7"><span class="text-pink-300 text-sm font-bold">02</span><h3 class="font-display text-xl font-bold mt-4">Register</h3><p class="text-gray-500 text-sm leading-6 mt-2">Enter your name, email and phone number.</p></div>
+        <div class="glass rounded-3xl p-7"><span class="text-cyan-300 text-sm font-bold">03</span><h3 class="font-display text-xl font-bold mt-4">Receive Email</h3><p class="text-gray-500 text-sm leading-6 mt-2">Your subscription details are saved and confirmation is emailed.</p></div>
+      </div>
+    </section>
+
+    <section id="faq" class="py-24 px-5">
+      <div class="max-w-4xl mx-auto"><div class="text-center"><div class="text-xs uppercase tracking-[.22em] text-gray-500 font-bold">FAQ</div><h2 class="font-display text-4xl font-bold mt-3">Questions, answered.</h2></div>
+        <div class="mt-10 space-y-3">
+          <details class="glass rounded-2xl p-5"><summary class="font-semibold cursor-pointer">Can I renew before my plan expires?</summary><p class="text-gray-500 text-sm leading-6 mt-3">Yes. A renewal can be recorded to start from the current expiry date.</p></details>
+          <details class="glass rounded-2xl p-5"><summary class="font-semibold cursor-pointer">What if my subscription has already expired?</summary><p class="text-gray-500 text-sm leading-6 mt-3">The renewal can start from the day you renew.</p></details>
+          <details class="glass rounded-2xl p-5"><summary class="font-semibold cursor-pointer">Will I receive confirmation?</summary><p class="text-gray-500 text-sm leading-6 mt-3">Yes, after the database request succeeds, the configured email service sends a confirmation.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5 py-10 px-5">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-5 justify-between text-sm text-gray-500">
+      <div>© 2026 Hey Design Eye. All rights reserved.</div>
+      <div>Designed & managed by Team Hey Design Eye.</div>
+    </div>
+    <div class="max-w-7xl mx-auto text-xs text-gray-600 mt-4">Disclaimer: Hey Design Eye is an independent reseller/service provider and is not owned, operated, endorsed, or sponsored by Canva Pvt. Ltd. “Canva” is a trademark of Canva Pty Ltd.</div>
+  </footer>
+
+  <div id="registrationModal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="modal glass rounded-3xl w-full max-w-lg p-7 shadow-2xl">
+      <div class="flex items-start justify-between"><div><div class="text-xs uppercase tracking-[.2em] text-gray-500">New subscription</div><h3 class="font-display text-3xl font-bold mt-1">Complete your details</h3></div><button onclick="closeModal('registrationModal')" class="text-gray-500 hover:text-white text-2xl">×</button></div>
+      <div id="selectedPlanLabel" class="mt-6 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm"></div>
+      <form id="registrationForm" class="space-y-4 mt-5">
+        <input type="hidden" id="regPlan">
+        <label class="block text-sm text-gray-400">Full Name<input id="regName" required maxlength="100" class="mt-2" placeholder="Your full name"></label>
+        <label class="block text-sm text-gray-400">Email<input id="regEmail" required type="email" maxlength="160" class="mt-2" placeholder="you@example.com"></label>
+        <label class="block text-sm text-gray-400">Phone Number<input id="regPhone" required maxlength="20" class="mt-2" placeholder="+91 XXXXX XXXXX"></label>
+        <div id="regStatus" class="status text-sm text-gray-400"></div>
+        <button class="btn btn-primary w-full" type="submit" id="regSubmit">Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="renewalModal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="modal glass rounded-3xl w-full max-w-lg p-7 shadow-2xl">
+      <div class="flex items-start justify-between"><div><div class="text-xs uppercase tracking-[.2em] text-gray-500">Existing customer</div><h3 class="font-display text-3xl font-bold mt-1">Renew subscription</h3></div><button onclick="closeModal('renewalModal')" class="text-gray-500 hover:text-white text-2xl">×</button></div>
+      <form id="renewalForm" class="space-y-4 mt-7">
+        <label class="block text-sm text-gray-400">Registered Email<input id="renewEmail" required type="email" maxlength="160" class="mt-2" placeholder="Your registered email"></label>
+        <label class="block text-sm text-gray-400">Phone Number<input id="renewPhone" required maxlength="20" class="mt-2" placeholder="Your registered phone"></label>
+        <label class="block text-sm text-gray-400">Renewal Plan<select id="renewPlan" required class="mt-2"></select></label>
+        <div id="renewStatus" class="status text-sm text-gray-400"></div>
+        <button class="btn btn-primary w-full" type="submit" id="renewSubmit">Request Renewal</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden glass rounded-2xl px-5 py-4 text-sm"></div>
+
+<script>
+const APP_CONFIG = {
+  SUPABASE_URL: "YOUR_SUPABASE_URL",
+  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_KEY",
+  EMAILJS_PUBLIC_KEY: "YOUR_EMAILJS_PUBLIC_KEY",
+  EMAILJS_SERVICE_ID: "YOUR_EMAILJS_SERVICE_ID",
+  CUSTOMER_TEMPLATE_ID: "YOUR_CUSTOMER_TEMPLATE_ID",
+  ADMIN_TEMPLATE_ID: "YOUR_ADMIN_TEMPLATE_ID",
+  ADMIN_EMAIL: "heydesigneye.info@gmail.com",
+  BRAND_NAME: "Hey Design Eye"
+};
+
+const PLANS = [
+  {name:"1 Month", price:"₹90", months:1, note:"Quick access"},
+  {name:"3 Months", price:"₹199", months:3, note:"Most flexible"},
+  {name:"6 Months", price:"₹349", months:6, note:"Better value"},
+  {name:"1 Year", price:"₹499", months:12, note:"Best value", featured:true}
+];
+
+const isConfigured = APP_CONFIG.SUPABASE_URL.startsWith("http") && !APP_CONFIG.SUPABASE_ANON_KEY.startsWith("YOUR_");
+const supabaseClient = isConfigured ? window.supabase.createClient(APP_CONFIG.SUPABASE_URL, APP_CONFIG.SUPABASE_ANON_KEY) : null;
+const emailConfigured = !APP_CONFIG.EMAILJS_PUBLIC_KEY.startsWith("YOUR_") && !APP_CONFIG.EMAILJS_SERVICE_ID.startsWith("YOUR_") && !APP_CONFIG.CUSTOMER_TEMPLATE_ID.startsWith("YOUR_") && !APP_CONFIG.ADMIN_TEMPLATE_ID.startsWith("YOUR_");
+
+function renderPlans(){
+  const wrap=document.getElementById("plans"), renew=document.getElementById("renewPlan");
+  wrap.innerHTML=PLANS.map(p=>`
+    <article class="plan ${p.featured?'featured':''} rounded-3xl p-7" data-plan="${p.name}">
+      ${p.featured?'<div class="absolute top-5 right-5 text-[10px] uppercase tracking-[.18em] font-bold text-cyan-200 px-2 py-1 rounded-full bg-cyan-400/10 border border-cyan-300/20">Best Value</div>':''}
+      <div class="text-xs uppercase tracking-[.18em] text-gray-500">${p.note}</div>
+      <h3 class="font-display text-xl font-bold mt-5">${p.name}</h3>
+      <div class="mt-4 flex items-end gap-1"><span class="font-display text-4xl font-bold">${p.price}</span><span class="text-gray-600 mb-1">/ plan</span></div>
+      <div class="text-sm text-gray-500 mt-2">${p.months===12?'12 months':' '+p.months+' month'+(p.months>1?'s':'')}</div>
+      <button class="btn ${p.featured?'btn-primary':'btn-ghost'} w-full mt-8" onclick="openRegistration('${p.name}')">Buy Now <span class="ml-2">→</span></button>
+    </article>`).join("");
+  renew.innerHTML='<option value="">Select renewal plan</option>'+PLANS.map(p=>`<option value="${p.name}">${p.name} — ${p.price}</option>`).join("");
+  document.querySelectorAll(".plan").forEach(card=>card.addEventListener("mousemove",e=>{const r=card.getBoundingClientRect();card.style.setProperty("--x",(e.clientX-r.left)+"px");card.style.setProperty("--y",(e.clientY-r.top)+"px")}));
+}
+
+function openRegistration(plan){document.getElementById("regPlan").value=plan;document.getElementById("selectedPlanLabel").innerHTML=`Selected plan <strong class="float-right">${plan}</strong>`;document.getElementById("regStatus").textContent="";openModal("registrationModal");}
+function openRenewal(){document.getElementById("renewStatus").textContent="";openModal("renewalModal");}
+function openModal(id){const m=document.getElementById(id);m.classList.remove("hidden");m.classList.add("flex");document.body.style.overflow="hidden";}
+function closeModal(id){const m=document.getElementById(id);m.classList.add("hidden");m.classList.remove("flex");document.body.style.overflow="";}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.remove("hidden");setTimeout(()=>t.classList.add("hidden"),4500);}
+
+async function sendCustomerEmail(data, type){
+  if(!emailConfigured) return {ok:false, skipped:true};
+  emailjs.init({publicKey:APP_CONFIG.EMAILJS_PUBLIC_KEY});
+  return emailjs.send(APP_CONFIG.EMAILJS_SERVICE_ID,APP_CONFIG.CUSTOMER_TEMPLATE_ID,{
+    to_name:data.name,to_email:data.email,plan:data.plan,registration_date:data.start_date,expiry_date:data.expiry_date,brand_name:APP_CONFIG.BRAND_NAME,type:type
+  });
+}
+async function sendAdminEmail(data,type){
+  if(!emailConfigured) return {ok:false, skipped:true};
+  return emailjs.send(APP_CONFIG.EMAILJS_SERVICE_ID,APP_CONFIG.ADMIN_TEMPLATE_ID,{
+    customer_name:data.name,customer_email:data.email,customer_phone:data.phone,plan:data.plan,registration_date:data.start_date,expiry_date:data.expiry_date,type:type,admin_email:APP_CONFIG.ADMIN_EMAIL
+  });
+}
+
+document.getElementById("registrationForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const btn=document.getElementById("regSubmit"), status=document.getElementById("regStatus");
+  btn.disabled=true;btn.textContent="Saving...";
+  const payload={name:regName.value.trim(),email:regEmail.value.trim().toLowerCase(),phone:regPhone.value.trim(),plan:regPlan.value};
+  try{
+    if(!isConfigured) throw new Error("Website backend is not configured yet. Add your Supabase URL and anon key first.");
+    const {data,error}=await supabaseClient.rpc("register_subscription",{p_name:payload.name,p_email:payload.email,p_phone:payload.phone,p_plan:payload.plan});
+    if(error) throw error;
+    const row=Array.isArray(data)?data[0]:data;
+    const mailData={...payload,start_date:row.start_date,expiry_date:row.expiry_date};
+    await Promise.allSettled([sendCustomerEmail(mailData,"New Registration"),sendAdminEmail(mailData,"New Registration")]);
+    status.textContent="Registration saved successfully. Please check your email.";
+    status.className="status text-sm text-emerald-400";
+    showToast("Registration completed successfully.");
+    e.target.reset(); setTimeout(()=>closeModal("registrationModal"),1800);
+  }catch(err){console.error(err);status.textContent=err.message||"Something went wrong. Please try again.";status.className="status text-sm text-rose-400";}
+  finally{btn.disabled=false;btn.textContent="Continue";}
+});
+
+document.getElementById("renewalForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const btn=document.getElementById("renewSubmit"), status=document.getElementById("renewStatus");
+  btn.disabled=true;btn.textContent="Checking...";
+  try{
+    if(!isConfigured) throw new Error("Website backend is not configured yet.");
+    const {data,error}=await supabaseClient.rpc("request_renewal",{p_email:renewEmail.value.trim().toLowerCase(),p_phone:renewPhone.value.trim(),p_plan:renewPlan.value});
+    if(error) throw error;
+    const row=Array.isArray(data)?data[0]:data;
+    if(!row) throw new Error("No matching active or previous subscription was found.");
+    const mailData={name:row.name,email:row.email,phone:row.phone,plan:row.plan,start_date:row.start_date,expiry_date:row.expiry_date};
+    await Promise.allSettled([sendCustomerEmail(mailData,"Renewal Request"),sendAdminEmail(mailData,"Renewal Request")]);
+    status.textContent="Renewal request saved successfully. Please check your email.";
+    status.className="status text-sm text-emerald-400";
+    e.target.reset();showToast("Renewal request completed.");setTimeout(()=>closeModal("renewalModal"),1800);
+  }catch(err){console.error(err);status.textContent=err.message||"We could not process the renewal.";status.className="status text-sm text-rose-400";}
+  finally{btn.disabled=false;btn.textContent="Request Renewal";}
+});
+
+renderPlans();
+</script>
+</body>
+</html>
